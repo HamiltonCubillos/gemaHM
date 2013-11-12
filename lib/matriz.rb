@@ -101,53 +101,15 @@ class Matriz
    attr_reader :matriz, :filas, :columnas
    
    def initialize(matriz)
-      @matriz = Array.new(matriz)
-      @filas = matriz.size
-      @columnas = matriz[0].size
-   end
-   
-      #Imprime la matrices
-   def to_s
-      self.columnas.times do |i|   
-         self.filas.times do |j|
-            print "#{matriz[i][j]}  "
-         end
-	 puts
-      end
-      puts 
-   end
-      
-#    
-#       muestra la matriz (los indices empiezan por 0) seleccionando en el primer elemento el subarray al que pertenece el elemento que se quiere mostrar ,luego con el otro atributo seleccionamos la posicion que ocupa dicho elemento en este subvector.
-#       ejemplo:  m1=[ [1,2,3] , [4,5,6] ]
-#       puts m1[0,1] -> 2
-#       puts m1[1,1] -> 6
-#    
-   def [](i,j)
-      matriz[i][j]
-   end
-   
-end
-
-#matriz normal
-class MatrizDensa < Matriz
-  
-end
-
-class MatrizDispersa < Matriz
-    #modificar el initialize,pues no necesito almacenar los '0' guardar los indices donde se encuentran dichos ceros
-    #metodo que dado una fila y columna y un porcentaje de ceros prc,construye una matriz aleatoria
-    attr_reader :hash_no_ceros
-    
-   def initialize(matriz)
       #comprobamos que la matriz es dispersa o no
       n_elementos= (matriz.size * matriz[0].size)*0.6 
       @filas = matriz.size
       @columnas = matriz[0].size
       n_ceros=0
       @hash_no_ceros={}
-      filas.times do |i|
-         columnas.times do |j|
+      @matriz = Array.new(matriz)
+      @filas.times do |i|
+         @columnas.times do |j|
 	    if (matriz[i][j]==0)  
 	       n_ceros=n_ceros+1
 	    else
@@ -159,27 +121,65 @@ class MatrizDispersa < Matriz
       end
       
       if n_ceros < n_elementos
-         raise RuntimeError, 'La Matriz no es dispersa'
+         return MatrizDensa.new(matriz)
       else
+				puts "OK"
+				 return MatrizDispersa.new(@hash_no_ceros)
+				 
       end
-      
+   end
+   
+   def [](i,j)
+      matriz[i][j]
+   end
+   
+end
+
+#matriz normal
+class MatrizDensa < Matriz
+  def initialize(matriz)
+      @matriz = Array.new(matriz)
+      @filas = matriz.size
+      @columnas = matriz[0].size
+   end
+   
+   #Imprime la matrices
+   def to_s
+   puts "Matriz Densa"
+      @filas.times do |i|   
+         @columnas.times do |j|
+            print "#{matriz[i][j]} "
+         end
+				puts
+      end
+      puts 
+   end
+end
+
+class MatrizDispersa < Matriz
+    #modificar el initialize,pues no necesito almacenar los '0' guardar los indices donde se encuentran dichos ceros
+    #metodo que dado una fila y columna y un porcentaje de ceros prc,construye una matriz aleatoria
+    attr_reader :hash_no_ceros
+    
+   def initialize(matriz)
+   
+      @hash_no_ceros = matriz
+      @filas = matriz.size
+      @columnas = matriz[0].size
    end
     
     def to_s
-#        @hash_no_ceros.each do |clave,valor|
-#           print "#{clave} : #{valor} "
-#        end
-#        puts
-       filas.times do |i|
-         columnas.times do |j|
-	    if (hash_no_ceros.key?("#{i}#{j}"))
-	       print hash_no_ceros["#{i}#{j}"]
-	       print "  "
-	    else
-	       print "0  "
-	    end
-	 end
-	 puts
+    puts "Matriz Dispersa"
+       self.filas.times do |i|
+         self.columnas.times do |j|
+					if (@hash_no_ceros.key?("#{i}#{j}"))
+						print hash_no_ceros["#{i}#{j}"]
+						print "  "
+					else
+						print "0  "
+					end
+				end
+					puts
        end
     end #def to_s
     
@@ -190,15 +190,6 @@ class MatrizDispersa < Matriz
       suma=hash_no_ceros.merge(other.hash_no_ceros){|key,oldval,newval| oldval+newval}
 #       puts hash_no_ceros
       return suma
-    end
-    
-    #Necesito un metodo que dada una posion i,j dentro del vector me devuelva true si esa posicion es un 0 para realizar las operaciones  conforme a ello.
-    def es_cero(i,j)
-       if (matriz[i][j]==0)
-          return true
-       else 
-          return false
-       end
     end
 end
 
