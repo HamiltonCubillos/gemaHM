@@ -131,7 +131,13 @@ end
 
 #matriz normal
 class MatrizDensa < Matriz
-  
+   
+   def + (other)
+		other.@hash_no_ceros.each do |clave,valor|
+           matriz [clave[0]][clave[1]] += other.@hash_no_ceros[clave] 
+		end
+   end
+   
 end
 
 class MatrizDispersa < Matriz
@@ -204,5 +210,8 @@ end
 
 
 md1=MatrizDispersa.new([[0,0,0],[1,2,3],[0,0,0]])
+md2=MatrizDensa.new([[0,0,0],[1,2,3],[1,1,1]])
+
+md2 + md1
 puts md1
 
